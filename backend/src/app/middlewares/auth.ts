@@ -9,12 +9,17 @@ import catchAsync from '../utils/catchAsync';
 
 const auth = (...requiredRoles: TUserRole[]) => {
   return catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-    const token = req.headers.authorization;
+    const authHeader = req.headers.authorization;
 
     // checking if the token is missing
-    if (!token) {
+    if (!authHeader) {
       throw new AppError(httpStatus.UNAUTHORIZED, 'You are not authorized!');
     }
+
+    // Extract token from "Bearer <token>" format
+    const token = authHeader.startsWith('Bearer ')
+      ? authHeader.substring(7)
+      : authHeader;
 
     // checking if the given token is valid
     const decoded = jwt.verify(

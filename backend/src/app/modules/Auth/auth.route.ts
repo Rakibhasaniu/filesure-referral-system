@@ -7,12 +7,130 @@ import { AuthValidation } from './auth.validation';
 
 const router = express.Router();
 
+/**
+ * @swagger
+ * /auth/register:
+ *   post:
+ *     summary: Register a new user
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - name
+ *               - email
+ *               - password
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 example: John Doe
+ *               email:
+ *                 type: string
+ *                 format: email
+ *                 example: rakib@example.com
+ *               password:
+ *                 type: string
+ *                 format: password
+ *                 minLength: 6
+ *                 example: password123
+ *               referralCode:
+ *                 type: string
+ *                 description: Optional referral code from another user
+ *                 example: RAKIB123
+ *     responses:
+ *       201:
+ *         description: User registered successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: User registered successfully!
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     accessToken:
+ *                       type: string
+ *                     user:
+ *                       type: object
+ *                       properties:
+ *                         id:
+ *                           type: string
+ *                           example: U-000001
+ *                         email:
+ *                           type: string
+ *                           example: rakib@example.com
+ *                         referralCode:
+ *                           type: string
+ *                           example: RAKIB456
+ *       409:
+ *         description: Email already registered
+ *       404:
+ *         description: Invalid referral code
+ */
 router.post(
   '/register',
   validateRequest(AuthValidation.registerValidationSchema),
   AuthControllers.registerUser,
 );
 
+/**
+ * @swagger
+ * /auth/login:
+ *   post:
+ *     summary: Login user
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - id
+ *               - password
+ *             properties:
+ *               id:
+ *                 type: string
+ *                 example: U-000001
+ *               password:
+ *                 type: string
+ *                 format: password
+ *                 example: password123
+ *     responses:
+ *       200:
+ *         description: User logged in successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: User is logged in successfully!
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     accessToken:
+ *                       type: string
+ *                     needsPasswordChange:
+ *                       type: boolean
+ *       404:
+ *         description: User not found
+ *       403:
+ *         description: Invalid credentials or user blocked
+ */
 router.post(
   '/login',
   validateRequest(AuthValidation.loginValidationSchema),
