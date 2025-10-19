@@ -15,20 +15,17 @@ const makePurchaseIntoDB = async (
   try {
     session.startTransaction();
 
-    // Find the user
-    const user = await User.findById(userId).session(session);
+    const user = await User.findOne({ id: userId }).session(session);
     if (!user) {
       throw new AppError(httpStatus.NOT_FOUND, 'User not found');
     }
 
-    // Check if this is the first purchase
     const isFirstPurchase = !user.hasPurchased;
 
-    // Create the purchase
     const purchase = await Purchase.create(
       [
         {
-          user: userId,
+          user: user._id,
           productName: payload.productName || 'Digital Product',
           amount: payload.amount || 10,
           isFirstPurchase,
@@ -37,11 +34,11 @@ const makePurchaseIntoDB = async (
       { session },
     );
 
-    // If this is the first purchase, award credits
+
     if (isFirstPurchase) {
       // Update user's hasPurchased status and add 2 credits to the buyer
       await User.findByIdAndUpdate(
-        userId,
+        user._id,
         {
           hasPurchased: true,
           $inc: { credits: 2 },
@@ -49,14 +46,12 @@ const makePurchaseIntoDB = async (
         { session },
       );
 
-      // If user was referred, award credits to referrer
       if (user.referredBy) {
         const referrer = await User.findOne({
           referralCode: user.referredBy,
         }).session(session);
 
         if (referrer) {
-          // Award 2 credits to referrer
           await User.findByIdAndUpdate(
             referrer._id,
             {
@@ -65,7 +60,6 @@ const makePurchaseIntoDB = async (
             { session },
           );
 
-          // Update referral status
           await Referral.findOneAndUpdate(
             { referrer: referrer._id, referred: user._id },
             {
@@ -91,7 +85,12 @@ const makePurchaseIntoDB = async (
 };
 
 const getUserPurchasesFromDB = async (userId: string) => {
-  const purchases = await Purchase.find({ user: userId }).sort({
+  const user = await User.findOne({ id: userId });
+  if (!user) {
+    throw new AppError(httpStatus.NOT_FOUND, 'User not found');
+  }
+
+  const purchases = await Purchase.find({ user: user._id }).sort({
     createdAt: -1,
   });
   return purchases;
