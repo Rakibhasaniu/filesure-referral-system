@@ -8,6 +8,12 @@ import { AuthValidation } from './auth.validation';
 const router = express.Router();
 
 router.post(
+  '/register',
+  validateRequest(AuthValidation.registerValidationSchema),
+  AuthControllers.registerUser,
+);
+
+router.post(
   '/login',
   validateRequest(AuthValidation.loginValidationSchema),
   AuthControllers.loginUser,
@@ -18,8 +24,7 @@ router.post(
   auth(
     USER_ROLE.superAdmin,
     USER_ROLE.admin,
-    USER_ROLE.faculty,
-    USER_ROLE.student,
+    USER_ROLE.user,
   ),
   validateRequest(AuthValidation.changePasswordValidationSchema),
   AuthControllers.changePassword,
