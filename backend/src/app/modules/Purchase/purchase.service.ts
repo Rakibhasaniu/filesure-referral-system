@@ -1,6 +1,10 @@
 import httpStatus from 'http-status';
 import mongoose from 'mongoose';
 import AppError from '../../errors/AppError';
+import {
+  sendFirstPurchaseEmail,
+  sendReferralConversionNotification,
+} from '../../services/emailService';
 import { User } from '../User/user.model';
 import { Referral } from '../Referral/referral.model';
 import { Purchase } from './purchase.model';
@@ -75,6 +79,35 @@ const makePurchaseIntoDB = async (
 
     await session.commitTransaction();
     await session.endSession();
+
+
+    if (isFirstPurchase) {
+      const updatedUser = await User.findOne({ id: userId });
+
+      if (updatedUser) {
+        sendFirstPurchaseEmail(
+          updatedUser.email,
+          updatedUser.id,
+          2,
+          updatedUser.credits,
+        );
+
+        if (user.referredBy) {
+          const referrer = await User.findOne({
+            referralCode: user.referredBy,
+          });
+
+          if (referrer) {
+            sendReferralConversionNotification(
+              referrer.email,
+              referrer.id,
+              updatedUser.email,
+              2,
+            );
+          }
+        }
+      }
+    }
 
     return purchase[0];
   } catch (err) {

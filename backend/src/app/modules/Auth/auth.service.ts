@@ -5,6 +5,10 @@ import mongoose from 'mongoose';
 import config from '../../config';
 import AppError from '../../errors/AppError';
 import { sendEmail } from '../../utils/sendEmail';
+import {
+  sendWelcomeEmail,
+  sendReferralSignupNotification,
+} from '../../services/emailService';
 import { User } from '../User/user.model';
 import { Referral } from '../Referral/referral.model';
 import { generateUserId, generateReferralCode } from '../User/user.utils';
@@ -72,6 +76,25 @@ const registerUser = async (payload: TRegisterUser) => {
 
     await session.commitTransaction();
     await session.endSession();
+
+    const frontendUrl = config.frontend_url || 'http://localhost:3000';
+    const referralLink = `${frontendUrl}/register?r=${newUser[0].referralCode}`;
+
+    sendWelcomeEmail(
+      newUser[0].email,
+      payload.name,
+      newUser[0].referralCode,
+      referralLink,
+    );
+
+    if (referrer) {
+      sendReferralSignupNotification(
+        referrer.email,
+        referrer.id,
+        payload.name,
+        newUser[0].email,
+      );
+    }
 
     const jwtPayload = {
       userId: newUser[0].id,
