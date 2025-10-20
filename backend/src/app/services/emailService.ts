@@ -18,6 +18,12 @@ const transporter = nodemailer.createTransport({
 });
 
 const sendEmail = async (to: string, subject: string, html: string) => {
+  // Skip sending emails in test environment
+  if (config.NODE_ENV === 'test' || process.env.NODE_ENV === 'test') {
+    console.log(`📧 [TEST MODE] Email skipped: ${to} - ${subject}`);
+    return;
+  }
+
   try {
     await transporter.sendMail({
       from: `"FileSure Templates" <${config.email_user}>`,

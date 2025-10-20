@@ -1,9 +1,0 @@
-{
-  "permissions": {
-    "allow": [
-      "Bash(npm install express-rate-limit helmet express-mongo-sanitize)"
-    ],
-    "deny": [],
-    "ask": []
-  }
-}

@@ -8,7 +8,7 @@ export interface TDashboardStats {
     userName: string;
     email: string;
     status: 'pending' | 'converted';
-    joinedAt: Date;
+    joinedAt?: Date;
     convertedAt?: Date;
   }[];
 }

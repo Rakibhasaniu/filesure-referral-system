@@ -6,4 +6,6 @@ export interface TReferral {
   status: 'pending' | 'converted';
   creditAwarded: boolean;
   convertedAt?: Date;
+  createdAt?: Date;
+  updatedAt?: Date;
 }

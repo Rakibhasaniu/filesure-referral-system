@@ -1,6 +1,10 @@
 import rateLimit from 'express-rate-limit';
 
+// Skip rate limiting in test environment
+const skipRateLimiting = process.env.NODE_ENV === 'test';
+
 export const generalLimiter = rateLimit({
+  skip: () => skipRateLimiting,
   windowMs: 15 * 60 * 1000, 
   max: 100, // Limit each IP to 100 requests per windowMs
   message: {
@@ -13,6 +17,7 @@ export const generalLimiter = rateLimit({
 
 
 export const authLimiter = rateLimit({
+  skip: () => skipRateLimiting,
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 10, 
   message: {
@@ -27,6 +32,7 @@ export const authLimiter = rateLimit({
 
 
 export const registerLimiter = rateLimit({
+  skip: () => skipRateLimiting,
   windowMs: 60 * 60 * 1000, 
   max: 5, // Limit each IP to 5 registrations per hour
   message: {
@@ -39,7 +45,8 @@ export const registerLimiter = rateLimit({
 });
 
 export const purchaseLimiter = rateLimit({
-  windowMs: 60 * 60 * 1000, // 1 hour
+  skip: () => skipRateLimiting,
+  windowMs: 60 * 60 * 1000,
   max: 15, 
   message: {
     success: false,
@@ -50,6 +57,7 @@ export const purchaseLimiter = rateLimit({
 });
 
 export const dashboardLimiter = rateLimit({
+  skip: () => skipRateLimiting,
   windowMs: 5 * 60 * 1000, 
   max: 30,
   message: {
