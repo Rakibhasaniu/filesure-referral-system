@@ -1,6 +1,7 @@
 import express from 'express';
 import auth from '../../middlewares/auth';
 import validateRequest from '../../middlewares/validateRequest';
+import { purchaseLimiter } from '../../middlewares/rateLimiter';
 import { USER_ROLE } from '../User/user.constant';
 import { PurchaseControllers } from './purchase.controller';
 import { PurchaseValidation } from './purchase.validation';
@@ -66,6 +67,7 @@ const router = express.Router();
  */
 router.post(
   '/',
+  purchaseLimiter,
   auth(USER_ROLE.user, USER_ROLE.admin, USER_ROLE.superAdmin),
   validateRequest(PurchaseValidation.makePurchaseValidationSchema),
   PurchaseControllers.makePurchase,

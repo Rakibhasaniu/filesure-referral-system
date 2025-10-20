@@ -1,5 +1,6 @@
 import express from 'express';
 import auth from '../../middlewares/auth';
+import { dashboardLimiter } from '../../middlewares/rateLimiter';
 import { USER_ROLE } from '../User/user.constant';
 import { DashboardControllers } from './dashboard.controller';
 
@@ -77,6 +78,7 @@ const router = express.Router();
  */
 router.get(
   '/stats',
+  dashboardLimiter,
   auth(USER_ROLE.user, USER_ROLE.admin, USER_ROLE.superAdmin),
   DashboardControllers.getDashboardStats,
 );

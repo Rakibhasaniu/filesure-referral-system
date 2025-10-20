@@ -1,6 +1,7 @@
 import express from 'express';
 import auth from '../../middlewares/auth';
 import validateRequest from '../../middlewares/validateRequest';
+import { registerLimiter, authLimiter } from '../../middlewares/rateLimiter';
 import { USER_ROLE } from '../User/user.constant';
 import { AuthControllers } from './auth.controller';
 import { AuthValidation } from './auth.validation';
@@ -78,6 +79,7 @@ const router = express.Router();
  */
 router.post(
   '/register',
+  registerLimiter, // 3 registrations per hour per IP
   validateRequest(AuthValidation.registerValidationSchema),
   AuthControllers.registerUser,
 );
@@ -130,9 +132,12 @@ router.post(
  *         description: User not found
  *       403:
  *         description: Invalid credentials or user blocked
+ *       429:
+ *         description: Too many login attempts, try again later
  */
 router.post(
   '/login',
+  authLimiter, // 5 failed login attempts per 15 minutes per IP
   validateRequest(AuthValidation.loginValidationSchema),
   AuthControllers.loginUser,
 );
