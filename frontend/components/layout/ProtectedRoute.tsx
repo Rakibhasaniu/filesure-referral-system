@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Cookies from 'js-cookie';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
@@ -19,27 +19,32 @@ export default function ProtectedRoute({
   const { isAuthenticated, isLoading, user } = useAppSelector(
     (state) => state.auth
   );
+  const [checking, setChecking] = useState(true);
 
   useEffect(() => {
     const token = Cookies.get('accessToken');
 
     if (!token) {
-      router.push('/login');
+      router.replace('/login');
       return;
     }
 
     if (!user && !isLoading) {
       dispatch(getCurrentUser());
     }
+
+    setChecking(false);
   }, [dispatch, router, user, isLoading]);
 
   useEffect(() => {
-    if (!isLoading && !isAuthenticated) {
-      router.push('/login');
-    }
-  }, [isAuthenticated, isLoading, router]);
+    const token = Cookies.get('accessToken');
 
-  if (isLoading || !user) {
+    if (!checking && !isLoading && !isAuthenticated && !token) {
+      router.replace('/login');
+    }
+  }, [isAuthenticated, isLoading, router, checking]);
+
+  if (checking || isLoading || !user) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-purple-50">
         <LoadingSpinner size="lg" text="Loading..." />

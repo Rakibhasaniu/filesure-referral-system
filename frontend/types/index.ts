@@ -48,18 +48,22 @@ export interface ReferralStats {
 }
 
 export interface Referral {
-  _id: string;
-  referrer: string;
-  referred: {
+  _id?: string;
+  referrer?: string;
+  referred?: {
     _id: string;
     email: string;
     id: string;
   };
+  name?: string;
+  userName?: string;
+  email?: string;
   status: 'pending' | 'converted';
-  creditAwarded: boolean;
+  creditAwarded?: boolean;
   convertedAt?: string;
-  createdAt: string;
-  updatedAt: string;
+  joinedAt?: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 

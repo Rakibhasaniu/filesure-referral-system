@@ -36,6 +36,9 @@ function PurchaseContent() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    e.stopPropagation();
+
+    console.log('Form submitted - preventing default');
     setShowSuccess(false);
 
     const result = await dispatch(
@@ -45,9 +48,13 @@ function PurchaseContent() {
       })
     );
 
+    console.log('Purchase result:', result);
+
     if (makePurchase.fulfilled.match(result)) {
+      console.log('Purchase successful, updating UI');
       setShowSuccess(true);
-      await dispatch(getCurrentUser());
+ 
+      dispatch(getCurrentUser());
       dispatch(getMyPurchases());
 
       setTimeout(() => {
@@ -116,7 +123,7 @@ function PurchaseContent() {
                   </Alert>
                 )}
 
-                <form onSubmit={handleSubmit} className="space-y-5">
+                <form onSubmit={handleSubmit} action="" className="space-y-5">
                   <Input
                     label="Product Name"
                     name="productName"

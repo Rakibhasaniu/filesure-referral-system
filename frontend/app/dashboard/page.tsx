@@ -203,34 +203,36 @@ function DashboardContent() {
                     </thead>
                     <tbody>
                       {stats.referrals.map((referral, index) => (
-                        <motion.tr
-                          key={referral._id}
-                          initial={{ opacity: 0, x: -20 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          transition={{ delay: 0.1 * index }}
-                          className="border-b border-gray-100 hover:bg-gray-50"
-                        >
-                          <td className="py-3 px-4 text-sm text-gray-900">
-                            {referral?.referred?.email}
-                          </td>
-                          <td className="py-3 px-4 text-sm text-gray-600 font-mono">
-                            {referral.referred?.id}
-                          </td>
-                          <td className="py-3 px-4">
-                            <Badge
-                              variant={
-                                referral.status === 'converted'
-                                  ? 'success'
-                                  : 'warning'
-                              }
-                            >
-                              {referral.status === 'converted' ? '✓ Converted' : '⏳ Pending'}
-                            </Badge>
-                          </td>
-                          <td className="py-3 px-4 text-sm text-gray-600">
-                            {formatDateTime(referral.createdAt)}
-                          </td>
-                        </motion.tr>
+                          <motion.tr
+                            key={referral._id || `referral-${index}`}
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: 0.1 * index }}
+                            className="border-b border-gray-100 hover:bg-gray-50"
+                          >
+                            <td className="py-3 px-4 text-sm text-gray-900">
+                              {referral.name || referral.userName}
+                            </td>
+                            <td className="py-3 px-4 text-sm text-gray-600 font-mono">
+                              {referral.email}
+                            </td>
+                            <td className="py-3 px-4">
+                              <Badge
+                                variant={
+                                  referral.status === 'converted'
+                                    ? 'success'
+                                    : 'warning'
+                                }
+                              >
+                                {referral.status === 'converted' ? '✓ Converted' : '⏳ Pending'}
+                              </Badge>
+                            </td>
+                            <td className="py-3 px-4 text-sm text-gray-600">
+                              {(referral.convertedAt || referral.joinedAt)
+                                ? formatDateTime((referral.convertedAt || referral.joinedAt)!)
+                                : 'N/A'}
+                            </td>
+                          </motion.tr>
                       ))}
                     </tbody>
                   </table>
