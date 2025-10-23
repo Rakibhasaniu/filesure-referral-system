@@ -46,7 +46,7 @@ export default function LoginPage() {
 
   const validateForm = (): boolean => {
     const errors: { [key: string]: string } = {};
-
+    console.log("formdata",formData)
     if (!formData.id.trim()) {
       errors.id = 'User ID or email is required';
     }
@@ -90,6 +90,7 @@ export default function LoginPage() {
       }));
     }
   };
+  console.log("f",formData)
 
 
   return (

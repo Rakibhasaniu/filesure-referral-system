@@ -27,7 +27,7 @@ export default function Navigation() {
     >
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
-          <Link href="/dashboard" className="flex items-center space-x-2">
+          <Link href="/" className="flex items-center space-x-2">
             <span className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">
               FileSure
             </span>
