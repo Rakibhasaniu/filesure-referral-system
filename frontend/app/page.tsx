@@ -2,10 +2,13 @@
 
 import Link from 'next/link';
 import { motion } from 'framer-motion';
+import { useAppSelector } from '@/redux/hooks';
 
 
 
 export default function Home() {
+  const { isAuthenticated } = useAppSelector((state) => state.auth);
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
       <div className="container mx-auto px-4 py-16">
@@ -73,18 +76,29 @@ export default function Home() {
             animate={{ opacity: 1 }}
             transition={{ delay: 0.8, duration: 0.6 }}
           >
-            <Link
-              href="/register"
-              className="px-8 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-lg hover:bg-blue-700 transition-colors duration-200"
-            >
-              Get Started
-            </Link>
-            <Link
-              href="/login"
-              className="px-8 py-3 bg-white text-blue-600 font-semibold rounded-lg shadow-lg hover:bg-gray-50 transition-colors duration-200 border-2 border-blue-600"
-            >
-              Sign In
-            </Link>
+            {isAuthenticated ? (
+              <Link
+                href="/dashboard"
+                className="px-8 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-lg hover:bg-blue-700 transition-colors duration-200"
+              >
+                Go to Dashboard
+              </Link>
+            ) : (
+              <>
+                <Link
+                  href="/register"
+                  className="px-8 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-lg hover:bg-blue-700 transition-colors duration-200"
+                >
+                  Get Started
+                </Link>
+                <Link
+                  href="/login"
+                  className="px-8 py-3 bg-white text-blue-600 font-semibold rounded-lg shadow-lg hover:bg-gray-50 transition-colors duration-200 border-2 border-blue-600"
+                >
+                  Sign In
+                </Link>
+              </>
+            )}
           </motion.div>
 
           <motion.div
