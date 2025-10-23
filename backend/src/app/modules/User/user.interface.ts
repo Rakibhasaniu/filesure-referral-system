@@ -4,6 +4,7 @@ import { USER_ROLE } from './user.constant';
 
 export interface TUser {
   id: string;
+  name: string;
   email: string;
   password: string;
   needsPasswordChange: boolean;
@@ -18,9 +19,10 @@ export interface TUser {
 }
 
 export interface UserModel extends Model<TUser> {
-  //instance methods for checking if the user exist
   isUserExistsByCustomId(id: string): Promise<TUser>;
-  //instance methods for checking if passwords are matched
+  
+  isUserExistsByEmailOrId(identifier: string): Promise<TUser>;
+  
   isPasswordMatched(
     plainTextPassword: string,
     hashedPassword: string,

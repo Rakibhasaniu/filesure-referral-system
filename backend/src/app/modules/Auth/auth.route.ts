@@ -88,7 +88,7 @@ router.post(
  * @swagger
  * /auth/login:
  *   post:
- *     summary: Login user
+ *     summary: Login user with email or user ID
  *     tags: [Auth]
  *     requestBody:
  *       required: true
@@ -102,11 +102,23 @@ router.post(
  *             properties:
  *               id:
  *                 type: string
- *                 example: U-000001
+ *                 description: User ID or email address
+ *                 example: rakib@example.com
  *               password:
  *                 type: string
  *                 format: password
  *                 example: password123
+ *           examples:
+ *             emailLogin:
+ *               summary: Login with email
+ *               value:
+ *                 id: rakib@example.com
+ *                 password: password123
+ *             userIdLogin:
+ *               summary: Login with user ID
+ *               value:
+ *                 id: U-000001
+ *                 password: password123
  *     responses:
  *       200:
  *         description: User logged in successfully

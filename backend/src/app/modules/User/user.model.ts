@@ -12,6 +12,10 @@ const userSchema = new Schema<TUser, UserModel>(
       required: true,
       unique: true,
     },
+    name: {
+      type: String,
+      required: true,
+    },
     email: {
       type: String,
       required: true,
@@ -77,7 +81,6 @@ userSchema.pre('save', async function (next) {
   next();
 });
 
-// set '' after saving password
 userSchema.post('save', function (doc, next) {
   doc.password = '';
   next();
@@ -85,6 +88,12 @@ userSchema.post('save', function (doc, next) {
 
 userSchema.statics.isUserExistsByCustomId = async function (id: string) {
   return await User.findOne({ id }).select('+password');
+};
+
+userSchema.statics.isUserExistsByEmailOrId = async function (identifier: string) {
+  return await User.findOne({
+    $or: [{ id: identifier }, { email: identifier }],
+  }).select('+password');
 };
 
 userSchema.statics.isPasswordMatched = async function (

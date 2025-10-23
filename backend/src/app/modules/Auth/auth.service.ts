@@ -46,6 +46,7 @@ const registerUser = async (payload: TRegisterUser) => {
       [
         {
           id: userId,
+          name: payload.name,
           email: payload.email,
           password: payload.password,
           role: 'user',
@@ -118,6 +119,7 @@ const registerUser = async (payload: TRegisterUser) => {
       refreshToken,
       user: {
         id: newUser[0].id,
+        name: newUser[0].name,
         email: newUser[0].email,
         referralCode: newUser[0].referralCode,
       },
@@ -130,7 +132,7 @@ const registerUser = async (payload: TRegisterUser) => {
 };
 
 const loginUser = async (payload: TLoginUser) => {
-  const user = await User.isUserExistsByCustomId(payload.id);
+  const user = await User.isUserExistsByEmailOrId(payload.id);
 
   if (!user) {
     throw new AppError(httpStatus.NOT_FOUND, 'This user is not found !');
