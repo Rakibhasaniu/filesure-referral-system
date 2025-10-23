@@ -60,6 +60,7 @@ export const getCurrentUser = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const response = await api.get<ApiResponse<User>>('/users/me');
+      console.log("response",response)
       return response.data.data;
     } catch (error: any) {
       return rejectWithValue(getErrorMessage(error));

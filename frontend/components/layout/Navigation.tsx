@@ -13,7 +13,7 @@ export default function Navigation() {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const { user } = useAppSelector((state) => state.auth);
-
+console.log(user)
   const handleLogout = async () => {
     await dispatch(logoutUser());
     router.push('/login');
@@ -52,9 +52,8 @@ export default function Navigation() {
             {user && (
               <div className="hidden sm:flex flex-col items-end">
                 <span className="text-sm font-semibold text-gray-900">
-                  {user.email}
+                  {user.name}
                 </span>
-                <span className="text-xs text-gray-500">{user.id}</span>
                 <span className="text-xs font-semibold text-blue-600">
                   💰 {user.credits} Credits
                 </span>
