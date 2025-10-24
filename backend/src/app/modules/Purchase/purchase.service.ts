@@ -40,22 +40,23 @@ const makePurchaseIntoDB = async (
 
 
     if (isFirstPurchase) {
-      // Update user's hasPurchased status and add 2 credits to the buyer
-      await User.findByIdAndUpdate(
-        user._id,
-        {
-          hasPurchased: true,
-          $inc: { credits: 2 },
-        },
-        { session },
-      );
 
       if (user.referredBy) {
         const referrer = await User.findOne({
           referralCode: user.referredBy,
         }).session(session);
-
+        console.log("referal",referrer)
         if (referrer) {
+           await User.findByIdAndUpdate(
+            user._id,
+            {
+              hasPurchased: true,
+              $inc: { credits: 2 },
+            },
+            { session },
+          );
+
+          
           await User.findByIdAndUpdate(
             referrer._id,
             {
@@ -74,6 +75,14 @@ const makePurchaseIntoDB = async (
             { session },
           );
         }
+      } else {
+        await User.findByIdAndUpdate(
+          user._id,
+          {
+            hasPurchased: true,
+          },
+          { session },
+        );
       }
     }
 
@@ -81,7 +90,8 @@ const makePurchaseIntoDB = async (
     await session.endSession();
 
 
-    if (isFirstPurchase) {
+    if (isFirstPurchase && user.referredBy) {
+      // Only send emails if user was referred (and got credits)
       const updatedUser = await User.findOne({ id: userId });
 
       if (updatedUser) {
@@ -92,19 +102,17 @@ const makePurchaseIntoDB = async (
           updatedUser.credits,
         );
 
-        if (user.referredBy) {
-          const referrer = await User.findOne({
-            referralCode: user.referredBy,
-          });
+        const referrer = await User.findOne({
+          referralCode: user.referredBy,
+        });
 
-          if (referrer) {
-            sendReferralConversionNotification(
-              referrer.email,
-              referrer.id,
-              updatedUser.email,
-              2,
-            );
-          }
+        if (referrer) {
+          sendReferralConversionNotification(
+            referrer.email,
+            referrer.id,
+            updatedUser.email,
+            2,
+          );
         }
       }
     }

@@ -102,11 +102,16 @@ function PurchaseContent() {
               <CardContent>
                 {showSuccess && (
                   <Alert type="success" className="mb-6">
-                    🎉 Purchase successful! You earned 2 credits!
-                    {user?.referredBy && (
-                      <p className="mt-2">
-                        Your referrer also earned 2 credits!
-                      </p>
+                    🎉 Purchase successful!
+                    {user?.referredBy ? (
+                      <>
+                        <p>You earned 2 credits!</p>
+                        <p className="mt-2">
+                          Your referrer also earned 2 credits!
+                        </p>
+                      </>
+                    ) : (
+                      <p>Purchase completed successfully.</p>
                     )}
                   </Alert>
                 )}
@@ -117,7 +122,7 @@ function PurchaseContent() {
                   </Alert>
                 )}
 
-                {!user?.hasPurchased && (
+                {!user?.hasPurchased && user?.referredBy && (
                   <Alert type="info" className="mb-6">
                     💡 This is your first purchase! You'll earn 2 credits.
                   </Alert>
@@ -153,7 +158,7 @@ function PurchaseContent() {
                       <li>• Product: {formData.productName || 'Digital Product'}</li>
                       <li>• Amount: {formatCurrency(parseFloat(formData.amount) || 0)}</li>
                       <li>
-                        • Credits to Earn: {user?.hasPurchased ? '0' : '2'} credits
+                        • Credits to Earn: {user?.hasPurchased ? '0' : (user?.referredBy ? '2' : '0')} credits
                       </li>
                     </ul>
                   </div>
@@ -221,7 +226,7 @@ function PurchaseContent() {
                           <span className="text-lg font-bold text-gray-900">
                             {formatCurrency(purchase.amount)}
                           </span>
-                          {purchase.isFirstPurchase && (
+                          {purchase.isFirstPurchase && user?.referredBy && (
                             <span className="text-sm text-green-600 font-medium">
                               +2 Credits Earned
                             </span>

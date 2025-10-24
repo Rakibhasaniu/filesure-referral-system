@@ -139,9 +139,10 @@ describe('Purchase Module', () => {
       expect(response.status).toBe(201);
       expect(response.body.data.isFirstPurchase).toBe(true);
 
-      // Only buyer gets credits (2), no referrer
+      // User without referral gets NO credits
       const buyer = await User.findOne({ id: directUserId });
-      expect(buyer?.credits).toBe(2);
+      expect(buyer?.credits).toBe(0);
+      expect(buyer?.hasPurchased).toBe(true);
     });
 
     it('should use default values if not provided', async () => {
@@ -221,7 +222,7 @@ describe('Purchase Module', () => {
   });
 
   describe('Credit Reward Logic', () => {
-    it('should award 2 credits to buyer on first purchase', async () => {
+    it('should award 2 credits to referred buyer on first purchase', async () => {
       await request(app)
         .post('/api/v1/purchases')
         .set('Authorization', `Bearer ${referredToken}`)
@@ -231,7 +232,7 @@ describe('Purchase Module', () => {
         });
 
       const buyer = await User.findOne({ id: referredUserId });
-      expect(buyer?.credits).toBe(2);
+      expect(buyer?.credits).toBe(2); // Gets credits because was referred
       expect(buyer?.hasPurchased).toBe(true);
     });
 

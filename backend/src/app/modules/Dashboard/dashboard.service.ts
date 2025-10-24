@@ -27,14 +27,11 @@ const getDashboardStats = async (userId: string): Promise<TDashboardStats> => {
     (ref) => ref.status === 'converted',
   ).length;
 
-  // Get total credits earned
-  const totalCreditsEarned = user.credits;
+  const totalCreditsEarned = convertedUsers * 2;
 
-  // Generate referral link
   const frontendUrl = config.frontend_url || 'http://localhost:3000';
   const referralLink = `${frontendUrl}/register?r=${user.referralCode}`;
 
-  // Format referral details
   const referralDetails = referrals.map((ref) => ({
     name: (ref.referred as any).name || 'Unknown',
     userName: (ref.referred as any).id || 'Unknown',
