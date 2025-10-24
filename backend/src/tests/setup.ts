@@ -14,6 +14,9 @@ export const connectDatabase = async () => {
       await mongoose.connect(testDbUri, {
         dbName: testDbName,
       });
+
+      // Allow MongoDB snapshot to stabilize after connection
+      await new Promise(resolve => setTimeout(resolve, 300));
     }
   } else {
     mongoServer = await MongoMemoryServer.create();
@@ -35,6 +38,10 @@ export const clearDatabase = async () => {
   }
 
   await Promise.all(promises);
+
+  // Delay to allow MongoDB snapshot to stabilize after clearing collections
+  // This prevents "SnapshotUnavailable" errors in rapid test execution with transactions
+  await new Promise(resolve => setTimeout(resolve, 200));
 };
 
 
