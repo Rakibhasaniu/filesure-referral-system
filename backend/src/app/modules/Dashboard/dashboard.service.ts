@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import httpStatus from 'http-status';
 import config from '../../config';
 import AppError from '../../errors/AppError';
@@ -15,7 +16,7 @@ const getDashboardStats = async (userId: string): Promise<TDashboardStats> => {
 
   // Find all referrals where this user is the referrer
   const referrals = await Referral.find({ referrer: user._id })
-    .populate('referred', 'id email createdAt')
+    .populate('referred', 'id name email createdAt')
     .sort({ createdAt: -1 });
 
   // Calculate total referred users
@@ -35,6 +36,7 @@ const getDashboardStats = async (userId: string): Promise<TDashboardStats> => {
 
   // Format referral details
   const referralDetails = referrals.map((ref) => ({
+    name: (ref.referred as any).name || 'Unknown',
     userName: (ref.referred as any).id || 'Unknown',
     email: (ref.referred as any).email || 'Unknown',
     status: ref.status,
