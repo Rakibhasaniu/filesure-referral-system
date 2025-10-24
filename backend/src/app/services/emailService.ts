@@ -7,15 +7,23 @@ import {
   firstPurchaseEmailTemplate,
 } from '../utils/emailTemplates';
 
-const transporter = nodemailer.createTransport({
-  host: 'smtp.gmail.com',
-  port: 587,
-  secure: false,
-  auth: {
-    user: config.email_user,
-    pass: config.email_pass,
-  },
-});
+// Lazy-load transporter to avoid initialization errors in test environment
+let transporter: nodemailer.Transporter | null = null;
+
+const getTransporter = () => {
+  if (!transporter && config.email_user && config.email_pass) {
+    transporter = nodemailer.createTransport({
+      host: 'smtp.gmail.com',
+      port: 587,
+      secure: false,
+      auth: {
+        user: config.email_user,
+        pass: config.email_pass,
+      },
+    });
+  }
+  return transporter;
+};
 
 const sendEmail = async (to: string, subject: string, html: string) => {
   // Skip sending emails in test environment
@@ -25,7 +33,13 @@ const sendEmail = async (to: string, subject: string, html: string) => {
   }
 
   try {
-    await transporter.sendMail({
+    const emailTransporter = getTransporter();
+    if (!emailTransporter) {
+      console.warn(`⚠️ Email not configured - skipping email to ${to}`);
+      return;
+    }
+
+    await emailTransporter.sendMail({
       from: `"FileSure Templates" <${config.email_user}>`,
       to,
       subject,
