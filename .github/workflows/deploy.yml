@@ -10,18 +10,6 @@ jobs:
     name: Run Tests
     runs-on: ubuntu-latest
 
-    services:
-      mongodb:
-        image: mongo:6.0
-        options: >-
-          --health-cmd "mongosh --eval 'db.runCommand({ ping: 1 })'"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-          --entrypoint "mongod --replSet rs0 --bind_ip_all"
-        ports:
-          - 27017:27017
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -33,17 +21,26 @@ jobs:
           cache: 'npm'
           cache-dependency-path: backend/package-lock.json
 
+      - name: Start MongoDB with Replica Set
+        run: |
+          docker run -d --name mongodb \
+            -p 27017:27017 \
+            mongo:6.0 \
+            --replSet rs0 \
+            --bind_ip_all
+
+          # Wait for MongoDB to start
+          sleep 5
+
+          # Initialize replica set
+          docker exec mongodb mongosh --eval "rs.initiate({_id: 'rs0', members: [{_id: 0, host: 'localhost:27017'}]})"
+
+          # Wait for replica set to be ready
+          sleep 10
+
       - name: Install dependencies
         working-directory: ./backend
         run: npm ci
-
-      - name: Wait for MongoDB
-        run: sleep 10
-
-      - name: Initialize MongoDB Replica Set
-        run: |
-          docker exec $(docker ps -q -f ancestor=mongo:6.0) mongosh --eval "rs.initiate({_id: 'rs0', members: [{_id: 0, host: 'localhost:27017'}]})"
-          sleep 10
       
       - name: Run tests
         working-directory: ./backend
