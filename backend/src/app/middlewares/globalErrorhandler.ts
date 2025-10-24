@@ -11,6 +11,14 @@ import handleZodError from '../errors/handleZodError';
 import { TErrorSources } from '../interface/error';
 
 const globalErrorHandler: ErrorRequestHandler = (err, req, res, next) => {
+  // Log error details in test/development for debugging
+  if (config.NODE_ENV === 'test' || config.NODE_ENV === 'development') {
+    console.error('Global Error Handler - Error Details:');
+    console.error('Message:', err.message);
+    console.error('Name:', err.name);
+    console.error('Stack:', err.stack);
+  }
+
   //setting default values
   let statusCode = 500;
   let message = 'Something went wrong!';
