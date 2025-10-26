@@ -48,7 +48,7 @@ export default function LoginPage() {
     const errors: { [key: string]: string } = {};
     console.log("formdata",formData)
     if (!formData.id.trim()) {
-      errors.id = 'User ID or email is required';
+      errors.id = 'Email is required';
     }
 
     if (!formData.password) {
@@ -122,11 +122,11 @@ export default function LoginPage() {
 
           <form onSubmit={handleSubmit} className="space-y-5">
             <Input
-              label="User ID or Email"
+              label="Email"
               name="id"
               value={formData.id}
               onChange={handleChange}
-              placeholder="U-000001 or email@example.com"
+              placeholder="rakib@example.com"
               error={formErrors.id}
               disabled={isLoading}
               required

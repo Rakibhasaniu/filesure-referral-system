@@ -163,7 +163,7 @@ function RegisterForm() {
               name="name"
               value={formData.name}
               onChange={handleChange}
-              placeholder="John Doe"
+              placeholder="Rakib Hasan"
               error={formErrors.name}
               disabled={isLoading}
               required
@@ -175,7 +175,7 @@ function RegisterForm() {
               type="email"
               value={formData.email}
               onChange={handleChange}
-              placeholder="john@example.com"
+              placeholder="rakib@example.com"
               error={formErrors.email}
               disabled={isLoading}
               required
@@ -220,7 +220,7 @@ function RegisterForm() {
               name="referralCode"
               value={formData.referralCode}
               onChange={handleChange}
-              placeholder="JOHN123"
+              placeholder="RAKIB123"
               helperText="Enter a referral code if you have one"
               disabled={isLoading || !!searchParams.get('r')}
             />

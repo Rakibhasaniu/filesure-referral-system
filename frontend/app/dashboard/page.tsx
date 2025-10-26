@@ -114,7 +114,7 @@ function DashboardContent() {
           />
           <StatCard
             icon="💰"
-            label="Total Credits Earned"
+            label="Credits Earned"
             value={stats?.totalCreditsEarned || 0}
             iconColor="text-purple-600"
           />
